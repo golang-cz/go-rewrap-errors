@@ -25,7 +25,7 @@ func Rewrite(filename string, oldSource []byte) ([]byte, error) {
 	buf := &bytes.Buffer{}
 	err = format.Node(buf, fset, newAST)
 	if err != nil {
-		return nil, fmt.Errorf("error formatting new code: %w", err)
+		return nil, fmt.Errorf("error formatting new code for %v: %w", filename, err)
 	}
 	return buf.Bytes(), nil
 }
@@ -98,7 +98,7 @@ func rewriteWrap(ce *ast.CallExpr) *ast.CallExpr {
 	fmtStr, ok := newArgs[0].(*ast.BasicLit)
 	if ok {
 		// Strip trailing `"` and append wrap code and new trailing `"`
-		fmtStr.Value = fmtStr.Value[:len(fmtStr.Value)-1] + `: %w"`
+		fmtStr.Value = fmtStr.Value[:len(fmtStr.Value)-1] + `: %w` + fmtStr.Value[len(fmtStr.Value)-1:]
 	} else {
 		binOp := &ast.BinaryExpr{
 			X:  newArgs[0],
